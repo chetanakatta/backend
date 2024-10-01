@@ -41,12 +41,21 @@ pipeline {
             }    
         }
 
+        stage ('Build') {
+            steps {
+                sh """
+                zip -q -r backend-${appVersion}.zip * -x Jenkinsfile -x backend-${appVersion}.zip
+                ls -ltr
+                """
+            }
+        }
+
     }    
     post { //useful as alert for success or failure
 
         always {
             echo 'I will always say hello'
-            //deleteDir()    //to delete workspace after build
+            deleteDir()    //to delete workspace after build
         }
 
         success {
