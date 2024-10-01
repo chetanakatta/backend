@@ -20,7 +20,7 @@ pipeline {
     }
 
     stages {
-        
+
         stage ('read the version') { 
             steps {
                 script {
@@ -46,7 +46,7 @@ pipeline {
 
         always {
             echo 'I will always say hello'
-            deleteDir()    //to delete workspace after build
+            //deleteDir()    //to delete workspace after build
         }
 
         success {
