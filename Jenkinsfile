@@ -7,8 +7,8 @@ pipeline {
     options {
 
         //after particular time job will be failed (timeout counter starts before agent is allocated)
-        timeout (time: 30, unit: 'MINUTES')
-        disableConcurrentBuilds () //disables multiple executions
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds() //disables multiple executions
         ansiColor('xterm')
 
     }
@@ -20,15 +20,17 @@ pipeline {
     }
 
     stages {
-        stage ( 'read the version' ) { 
+        
+        stage ('read the version') { 
             steps {
                 script {
                     def packageJson = readJSON file: 'package.json'
-                    def appVersion = packageJson.version
+                    appVersion = packageJson.version
                     echo "application version: $appVersion"
                 }
             }
         }
+
         stage ('Install Dependencies') {
             steps {    
                 sh """
