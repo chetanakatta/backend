@@ -60,12 +60,12 @@ pipeline {
                        nexusUrl: "${nexusUrl}",
                        groupId: 'com.expense',
                        version: "${appVersion}",
-                       repository: 'backend',
+                       repository: "backend",
                        credentialsId: 'nexus-auth',
                        artifacts: [
                         [artifactId: "backend",
                         classifier: '',
-                        file: "backend-" +" ${appVersion}" + ".zip",
+                        file: "backend-" + "${appVersion}" + '.zip',
                         type: 'zip']
                        ]
 
