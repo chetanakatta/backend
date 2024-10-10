@@ -1,10 +1,10 @@
 pipeline {
 
-    agent {
+    agent{
         label 'AGENT-1' // our agent name
     }
 
-    options {
+    options{
 
         //after particular time job will be failed (timeout counter starts before agent is allocated)
         timeout(time: 30, unit: 'MINUTES')
@@ -13,16 +13,21 @@ pipeline {
 
     }
 
-    environment {
+    parameter{
+
+        booleanParam(name: 'deploy', defaultValue: false, description: 'Toggle this value')
+    }
+
+    environment{
 
         def appVersion = ''  //variable declaration
         nexusUrl = 'nexus.expense.fun:8081'
 
     }
 
-    stages {
+    stages{
 
-        stage ('read the version') { 
+        stage ('read the version'){ 
             steps {
                 script {
                     def packageJson = readJSON file: 'package.json'
@@ -32,7 +37,7 @@ pipeline {
             }
         }
 
-        stage ('Install Dependencies') {
+        stage ('Install Dependencies'){
             steps {    
                 sh """
                 npm install
@@ -42,7 +47,7 @@ pipeline {
             }    
         }
 
-        stage ('Build') {
+        stage ('Build'){
             steps {
                 sh """
                 zip -q -r backend-${appVersion}.zip * -x Jenkinsfile -x backend-${appVersion}.zip
@@ -51,7 +56,7 @@ pipeline {
             }
         }
 
-        stage ('Sonar Scan') {
+        stage ('Sonar Scan'){
             environment {
                 scannerHome = tool 'sonar'  //referring scanner CLI
             }
@@ -64,7 +69,7 @@ pipeline {
             }
         }
 
-        stage ('Nexus Artifact Upload') {
+        stage ('Nexus Artifact Upload'){
             steps {
                 script {
                     nexusArtifactUploader(
@@ -88,9 +93,14 @@ pipeline {
             }
         }
 
-        stage ('Deploy') {
-            steps {
-                script {
+        stage ('Deploy'){
+            when{
+                expression{
+                    params.deploy
+                }
+            }
+            steps{
+                script{
                     def params = [
                         string(name: 'appVersion', value: "${appVersion}")
                     ]
@@ -101,18 +111,18 @@ pipeline {
         }
 
     }    
-    post { //useful as alert for success or failure
+    post{ //useful as alert for success or failure
 
-        always {
+        always{
             echo 'I will always say hello'
             deleteDir()    //to delete workspace after build
         }
 
-        success {
+        success{
             echo 'I will run when pipeline is success'
         }
 
-        failure {
+        failure{
             echo 'I will run when pipeline is failure'
             // we configure with slack, when failed we get messege
         }
