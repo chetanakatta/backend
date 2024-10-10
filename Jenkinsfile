@@ -13,7 +13,7 @@ pipeline {
 
     }
 
-    parameter{
+    parameters{
 
         booleanParam(name: 'deploy', defaultValue: false, description: 'Toggle this value')
     }
